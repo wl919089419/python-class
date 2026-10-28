@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PyKids - 少儿 Python & GESP 考级 API 互动速查站 (单文件离线版)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen">
+  <div id="app" class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
+    <!-- 头部导航 -->
+    <header class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-wrap items-center justify-between gap-4 sticky top-2 z-40">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchStage('gesp13')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-400 via-orange-500 to-emerald-500 text-white flex items-center justify-center text-xl shadow-md">
+          <i class="fa-brands fa-python"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-lg font-black tracking-tight bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 bg-clip-text text-transparent">
+              PyKids
+            </h1>
+            <span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full font-bold border border-amber-300">
+              少儿 Python & GESP 考级
+            </span>
+          </div>
+          <p class="text-xs text-slate-500">小学生 Python 学习与 API 交互式速查站 (单文件无后端版)</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button onclick="openModal('searchModal')" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold border border-slate-200 cursor-pointer">
+          <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+          <span>搜索函数/考点...</span>
+          <kbd class="px-1.5 py-0.2 text-[10px] bg-white border border-slate-300 rounded shadow-2xs">/</kbd>
+        </button>
+        <button onclick="openModal('tplModal')" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-sm cursor-pointer">
+          <i class="fa-solid fa-file-code"></i>
+          <span>做题模板速查 (10套)</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- 阶段选项卡 -->
+    <div id="stageTabs" class="flex flex-wrap gap-2"></div>
+
+    <!-- 阶段 Banner -->
+    <div id="stageHero" class="rounded-3xl p-5 text-white shadow-md relative overflow-hidden"></div>
+
+    <!-- 主体：左侧二级目录 + 右侧知识点详情 -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+      <aside id="sidebar" class="bg-white rounded-2xl border border-slate-200 p-3 shadow-sm space-y-2 lg:sticky lg:top-20 z-20 max-h-[calc(100vh-6rem)] overflow-y-auto"></aside>
+      <main id="mainContent" class="lg:col-span-3 space-y-6"></main>
+    </div>
+  </div>
+
+  <!-- 做题模板速查弹窗 -->
+  <div id="tplModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[88vh] flex flex-col overflow-hidden shadow-2xl">
+      <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-gradient-to-r from-amber-50 to-orange-50">
+        <div class="flex items-center space-x-2">
+          <span class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center text-sm font-bold">📑</span>
+          <h3 class="font-extrabold text-slate-900 text-base">GESP 做题常用代码高频模板速查</h3>
+        </div>
+        <button onclick="closeModal('tplModal')" class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer">&times;</button>
+      </div>
+      <div id="tplList" class="p-6 overflow-y-auto space-y-5"></div>
+    </div>
+  </div>
+
+  <!-- 全局搜索弹窗 -->
+  <div id="searchModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-start justify-center pt-20 p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border border-slate-200">
+      <div class="p-4 border-b border-slate-200 flex items-center space-x-3 bg-slate-50">
+        <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+        <input id="searchInput" type="text" oninput="handleSearch(this.value)" placeholder="快速搜索：print, split, map, range, gcd, dfs..." class="w-full bg-transparent text-sm focus:outline-hidden" />
+        <button onclick="closeModal('searchModal')" class="text-xs bg-white border border-slate-200 px-2 py-1 rounded">ESC</button>
+      </div>
+      <div id="searchResults" class="max-h-96 overflow-y-auto p-2 divide-y divide-slate-100"></div>
+    </div>
+  </div>
+
+  <!-- 嵌入完整结构化 JSON 数据与交互逻辑 -->
+  <script>
+    const STAGES = [
+      { id: 'turtle', title: '启蒙阶段', subtitle: 'Python Turtle 海龟绘图', badge: '趣味图形', bgGradient: 'from-emerald-500 to-teal-600', icon: 'fa-solid fa-shapes', description: '指挥可爱的小海龟爬行、旋转、落笔着色，建立生动的空间直觉与代码执行逻辑！' },
+      { id: 'gesp13', title: '入门阶段', subtitle: 'GESP 1-3 级核心实战', badge: '做题基本功', bgGradient: 'from-blue-500 to-indigo-600', icon: 'fa-solid fa-code', description: '做题得分核心地带！攻克输入输出避坑、变量运算、三大流程控制、字符串切片与列表操作。' },
+      { id: 'gesp46', title: '基础阶段', subtitle: 'GESP 4-6 级进阶编程', badge: '函数与算法', bgGradient: 'from-purple-500 to-violet-600', icon: 'fa-solid fa-brain', description: '掌握 def 函数封装、字典集合高级容器、进制位运算、文件异常、二分查找与递归排序！' },
+      { id: 'gesp68', title: '提高阶段', subtitle: 'GESP 6-8 级高阶冲刺', badge: '数据结构与DP', bgGradient: 'from-amber-500 to-orange-600', icon: 'fa-solid fa-rocket', description: '深入面向对象 OOP、栈与队列、树与图遍历 (DFS/BFS) 及经典动态规划。' }
+    ];
+
+    const TEMPLATES = [
+      { id: 't1', title: '单行读取多个整数 (GESP 必考第一神技)', gespLevel: 'GESP 1-3级必考', code: 'a, b = map(int, input().split())\\nnums = list(map(int, input().split()))', explanation: 'input().split() 负责把一行文本以空格切成字符串列表，map(int, ...) 统一将每个小字符串变成真正的整数 int。', pitfall: '千万不要漏掉 map 或 int！也不要在 input() 里写提示语 input("请输入:")，考级自动测评系统会把提示语当作错误输出判 0 分！' },
+      { id: 't2', title: '读取 N 行多组数据标准模板', gespLevel: 'GESP 2-4级必考', code: 'n = int(input())\\ntotal = 0\\nfor _ in range(n):\\n    num = int(input())\\n    total += num\\nprint(total)', explanation: '用 int(input()) 获取 n，再用 for _ in range(n) 重复执行 n 次 input()。', pitfall: '循环次数必须是 range(n)，而不是 range(1, n)，否则少读最后一行导致 EOFError！' },
+      { id: 't3', title: '高效素数(质数)判断模板', gespLevel: 'GESP 3-5级必考', code: 'def is_prime(n):\\n    if n <= 1: return False\\n    if n <= 3: return True\\n    if n % 2 == 0: return False\\n    i = 3\\n    while i * i <= n:\\n        if n % i == 0: return False\\n        i += 2\\n    return True', explanation: '只需循环检查到 int(n**0.5)，时间复杂度为 O(√n)。', pitfall: '1 既不是质数也不是合数！2 是唯一的偶质数。容易漏掉 n <= 1 返回 False 的特判。' },
+      { id: 't4', title: '最大公约数 GCD 与最小公倍数 LCM', gespLevel: 'GESP 3-5级必考', code: 'def gcd(a, b):\\n    while b != 0: a, b = b, a % b\\n    return a\\ndef lcm(a, b): return (a * b) // gcd(a, b)', explanation: '辗转相除法两行搞定，LCM 需使用 // 整除。', pitfall: '求 LCM 一定要用 // 整除，如果用单斜杠 / 会带 .0 浮点数导致格式错误！' },
+      { id: 't5', title: '二维列表矩阵初始化避坑模板', gespLevel: 'GESP 4-6级必考', code: 'n, m = map(int, input().split())\\ngrid = [[0] * m for _ in range(n)]', explanation: '为每一行独立开辟新列表，完全隔离修改。', pitfall: '绝对不能写 [[0]*m]*n，浅拷贝会导致修改一个元素整列全变！' },
+      { id: 't6', title: '二分查找标准模板 (左闭右闭)', gespLevel: 'GESP 5-7级必考', code: 'def binary_search(nums, target):\\n    l, r = 0, len(nums) - 1\\n    while l <= r:\\n        mid = l + (r - l) // 2\\n        if nums[mid] == target: return mid\\n        elif nums[mid] < target: l = mid + 1\\n        else: r = mid - 1\\n    return -1', explanation: '以 O(log n) 的极速在有序数组中查找。', pitfall: '数组必须提前排序！未排序需先 nums.sort()。' },
+      { id: 't7', title: '深度优先搜索 DFS 迷宫与全排列', gespLevel: 'GESP 6-8级必考', code: 'def dfs(step, n, visited, path, result):\\n    if step == n: result.append(path.copy()); return\\n    for i in range(1, n + 1):\\n        if not visited[i]:\\n            visited[i] = True; path.append(i)\\n            dfs(step + 1, n, visited, path, result)\\n            path.pop(); visited[i] = False', explanation: '经典回溯：选择 -> 深入 -> 撤销选择。', pitfall: '添加结果必须用 path.copy()，否则最终变成一堆空列表！' }
+    ];
+
+    let currentStage = 'gesp13';
+    let currentCategory = 'gesp13-io-lab';
+
+    // 交互式 print 实验室参数
+    let printSep = ' ';
+    let printEnd = '\\n';
+
+    function init() {
+      renderStageTabs();
+      renderHero();
+      renderSidebar();
+      renderMain();
+      renderTemplates();
+    }
+
+    function renderStageTabs() {
+      document.getElementById('stageTabs').innerHTML = STAGES.map(s => \`
+        <button onclick="switchStage('\${s.id}')" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer \${currentStage === s.id ? 'bg-gradient-to-r ' + s.bgGradient + ' text-white shadow-md' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'}">
+          <i class="\${s.icon} mr-1.5"></i>\${s.title} <span class="text-[10px] px-1.5 py-0.2 rounded \${currentStage === s.id ? 'bg-white/20' : 'bg-slate-100'}">\${s.badge}</span>
+        </button>
+      \`).join('');
+    }
+
+    function renderHero() {
+      const s = STAGES.find(x => x.id === currentStage);
+      document.getElementById('stageHero').className = 'rounded-3xl p-5 sm:p-6 text-white shadow-md relative overflow-hidden bg-gradient-to-r ' + s.bgGradient;
+      document.getElementById('stageHero').innerHTML = \`
+        <div class="relative z-10 max-w-2xl space-y-1">
+          <div class="text-xs font-bold text-white/80"><i class="\${s.icon} mr-1"></i>\${s.badge}</div>
+          <h2 class="text-xl sm:text-2xl font-black">\${s.title} · \${s.subtitle}</h2>
+          <p class="text-xs sm:text-sm text-white/90 leading-relaxed">\${s.description}</p>
+        </div>
+      \`;
+    }
+
+    function switchStage(stageId) {
+      currentStage = stageId;
+      if (stageId === 'turtle') currentCategory = 'turtle-motion';
+      else if (stageId === 'gesp13') currentCategory = 'gesp13-io-lab';
+      else if (stageId === 'gesp46') currentCategory = 'gesp46-funcs';
+      else currentCategory = 'gesp68-oop';
+      renderStageTabs();
+      renderHero();
+      renderSidebar();
+      renderMain();
+    }
+
+    function renderSidebar() {
+      const cats = getCategoriesForStage(currentStage);
+      document.getElementById('sidebar').innerHTML = \`
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider px-2 py-1">二级知识目录</div>
+        \${cats.map(c => \`
+          <button onclick="switchCategory('\${c.id}')" class="w-full text-left p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer \${currentCategory === c.id ? 'bg-blue-50 text-blue-800 border-l-4 border-blue-600' : 'text-slate-600 hover:bg-slate-100'}">
+            <i class="\${c.icon} mr-1.5 text-slate-400"></i>\${c.title}
+          </button>
+        \`).join('')}
+      \`;
+    }
+
+    function switchCategory(catId) {
+      currentCategory = catId;
+      renderSidebar();
+      renderMain();
+    }
+
+    function getCategoriesForStage(stageId) {
+      if (stageId === 'turtle') {
+        return [
+          { id: 'turtle-canvas', title: '画布与画笔控制', icon: 'fa-solid fa-paintbrush' },
+          { id: 'turtle-motion', title: '运动与转向命令', icon: 'fa-solid fa-compass' },
+          { id: 'turtle-shapes', title: '图形与颜色填充', icon: 'fa-solid fa-shapes' },
+          { id: 'turtle-state', title: '状态控制与清屏', icon: 'fa-solid fa-power-off' }
+        ];
+      } else if (stageId === 'gesp13') {
+        return [
+          { id: 'gesp13-io-lab', title: '输入与输出专题 (⭐必考)', icon: 'fa-solid fa-terminal' },
+          { id: 'gesp13-vars', title: '变量与基础数据类型', icon: 'fa-solid fa-cube' },
+          { id: 'gesp13-ops', title: '运算符与数学函数', icon: 'fa-solid fa-calculator' },
+          { id: 'gesp13-ctrl', title: '三大程序结构 (分支循环)', icon: 'fa-solid fa-arrows-split-up-and-left' },
+          { id: 'gesp13-lists', title: '列表 list 核心容器', icon: 'fa-solid fa-layer-group' },
+          { id: 'gesp13-strings', title: '字符串 str 专项全解 (⭐必考)', icon: 'fa-solid fa-quote-left' }
+        ];
+      } else if (stageId === 'gesp46') {
+        return [
+          { id: 'gesp46-funcs', title: '函数与作用域', icon: 'fa-solid fa-code-branch' },
+          { id: 'gesp46-cont', title: '复合容器 (字典与集合)', icon: 'fa-solid fa-boxes-stacked' },
+          { id: 'gesp46-base', title: '进制转换与字符编码', icon: 'fa-solid fa-binary' },
+          { id: 'gesp46-sort', title: '基础算法、递归与排序', icon: 'fa-solid fa-arrow-down-a-z' }
+        ];
+      } else {
+        return [
+          { id: 'gesp68-oop', title: '面向对象编程 (OOP)', icon: 'fa-solid fa-shapes' },
+          { id: 'gesp68-ds', title: '核心数据结构 (栈与队列)', icon: 'fa-solid fa-layer-group' },
+          { id: 'gesp68-graph', title: '经典搜索与图论 (DFS/BFS)', icon: 'fa-solid fa-network-wired' },
+          { id: 'gesp68-dp', title: '动态规划与数学进阶', icon: 'fa-solid fa-chart-line' }
+        ];
+      }
+    }
+
+    function renderMain() {
+      const main = document.getElementById('mainContent');
+      if (currentStage === 'turtle') {
+        main.innerHTML = getTurtleHtml();
+        initTurtleCanvas();
+      } else if (currentCategory === 'gesp13-io-lab') {
+        main.innerHTML = getIoLabHtml();
+      } else {
+        main.innerHTML = getStandardKnowledgeHtml(currentCategory);
+      }
+    }
+
+    // Turtle HTML & Canvas Logic
+    function getTurtleHtml() {
+      return \`
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+            <h3 class="font-extrabold text-slate-800 text-base">🐢 Python Turtle HTML5 互动画布</h3>
+            <div id="turtleStatus" class="text-xs font-mono bg-slate-50 px-3 py-1 rounded-xl border border-slate-200 text-slate-600">坐标: (0, 0) | 朝向: 0° | 落笔 ✍️</div>
+          </div>
+          <div class="flex justify-center bg-slate-50 border-2 border-slate-200 rounded-xl overflow-hidden p-2">
+            <canvas id="turtleCanvas" width="560" height="300" class="bg-white rounded-lg shadow-inner"></canvas>
+          </div>
+          <div class="space-y-1">
+            <div class="text-xs font-bold text-slate-600">经典考题一键作画：</div>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="drawStar()" class="px-3 py-1.5 bg-amber-50 text-amber-800 border border-amber-200 rounded-lg text-xs font-bold cursor-pointer hover:bg-amber-100">🌟 金色五角星 (rt 144°)</button>
+              <button onclick="drawSquare()" class="px-3 py-1.5 bg-blue-50 text-blue-800 border border-blue-200 rounded-lg text-xs font-bold cursor-pointer hover:bg-blue-100">🟧 彩色正方形 (rt 90°)</button>
+              <button onclick="drawSpiral()" class="px-3 py-1.5 bg-purple-50 text-purple-800 border border-purple-200 rounded-lg text-xs font-bold cursor-pointer hover:bg-purple-100">🌀 炫彩螺旋</button>
+              <button onclick="clearTurtle()" class="px-3 py-1.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold cursor-pointer hover:bg-rose-100">清屏重置</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 pt-2">
+            <button onclick="turtleFd(50)" class="p-2 bg-slate-100 hover:bg-blue-600 hover:text-white rounded-xl text-xs font-mono font-bold">fd(50)</button>
+            <button onclick="turtleBk(30)" class="p-2 bg-slate-100 hover:bg-blue-600 hover:text-white rounded-xl text-xs font-mono font-bold">bk(30)</button>
+            <button onclick="turtleRt(90)" class="p-2 bg-slate-100 hover:bg-amber-600 hover:text-white rounded-xl text-xs font-mono font-bold">rt(90)</button>
+            <button onclick="turtleLt(45)" class="p-2 bg-slate-100 hover:bg-amber-600 hover:text-white rounded-xl text-xs font-mono font-bold">lt(45)</button>
+            <button onclick="turtleCircle(30)" class="p-2 bg-slate-100 hover:bg-emerald-600 hover:text-white rounded-xl text-xs font-mono font-bold">circle(30)</button>
+            <button onclick="turtleHome()" class="p-2 bg-slate-100 hover:bg-indigo-600 hover:text-white rounded-xl text-xs font-mono font-bold">home()</button>
+          </div>
+        </div>
+      \`;
+    }
+
+    let turtleState = { x: 0, y: 0, angle: 0, penDown: true, history: [] };
+
+    function initTurtleCanvas() {
+      const c = document.getElementById('turtleCanvas');
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      ctx.clearRect(0, 0, c.width, c.height);
+      const cx = c.width / 2, cy = c.height / 2;
+      // 坐标轴
+      ctx.strokeStyle = '#e2e8f0'; ctx.beginPath();
+      ctx.moveTo(0, cy); ctx.lineTo(c.width, cy);
+      ctx.moveTo(cx, 0); ctx.lineTo(cx, c.height); ctx.stroke();
+      // 绘制轨迹
+      turtleState.history.forEach(h => {
+        ctx.strokeStyle = h.color; ctx.lineWidth = h.size; ctx.beginPath();
+        ctx.moveTo(cx + h.fx, cy - h.fy); ctx.lineTo(cx + h.tx, cy - h.ty); ctx.stroke();
+      });
+      // 小海龟光标
+      ctx.fillStyle = '#10b981'; ctx.beginPath();
+      ctx.arc(cx + turtleState.x, cy - turtleState.y, 8, 0, Math.PI * 2); ctx.fill();
+      document.getElementById('turtleStatus').innerText = \`坐标: (\${Math.round(turtleState.x)}, \${Math.round(turtleState.y)}) | 朝向: \${turtleState.angle}° | \${turtleState.penDown ? '落笔 ✍️' : '抬笔 ✋'}\`;
+    }
+
+    function turtleFd(d) {
+      const rad = (turtleState.angle * Math.PI) / 180;
+      const nx = turtleState.x + d * Math.cos(rad);
+      const ny = turtleState.y + d * Math.sin(rad);
+      if (turtleState.penDown) turtleState.history.push({ fx: turtleState.x, fy: turtleState.y, tx: nx, ty: ny, color: '#2563eb', size: 3 });
+      turtleState.x = nx; turtleState.y = ny;
+      initTurtleCanvas();
+    }
+    function turtleBk(d) { turtleFd(-d); }
+    function turtleRt(a) { turtleState.angle = (turtleState.angle + a) % 360; initTurtleCanvas(); }
+    function turtleLt(a) { turtleState.angle = (turtleState.angle - a + 360) % 360; initTurtleCanvas(); }
+    function turtleHome() { turtleState.x = 0; turtleState.y = 0; turtleState.angle = 0; initTurtleCanvas(); }
+    function clearTurtle() { turtleState = { x: 0, y: 0, angle: 0, penDown: true, history: [] }; initTurtleCanvas(); }
+    function turtleCircle(r) {
+      for (let i = 0; i < 36; i++) {
+        turtleFd((2 * Math.PI * r) / 36);
+        turtleLt(10);
+      }
+    }
+    function drawStar() {
+      clearTurtle();
+      for (let i = 0; i < 5; i++) {
+        turtleFd(100);
+        turtleRt(144);
+      }
+    }
+    function drawSquare() {
+      clearTurtle();
+      for (let i = 0; i < 4; i++) {
+        turtleFd(80);
+        turtleRt(90);
+      }
+    }
+    function drawSpiral() {
+      clearTurtle();
+      for (let i = 0; i < 20; i++) {
+        turtleFd(i * 5);
+        turtleRt(60);
+      }
+    }
+
+    // IO Lab HTML
+    function getIoLabHtml() {
+      return \`
+        <div class="space-y-6">
+          <!-- print 实验室 -->
+          <article class="bg-white rounded-2xl border-2 border-blue-200 p-5 shadow-xs space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+              <h3 class="font-extrabold text-base text-slate-900">print() 参数实验室 (sep 与 end 实时调控)</h3>
+              <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded">GESP 1-2级必考</span>
+            </div>
+            <div class="bg-amber-50 p-3 rounded-xl text-xs text-amber-950">
+              <strong>💡 1. 小学生秒懂解释：</strong>Python 的大喇叭！sep 决定中间用什么连接，end 决定结尾是换行还是空格！
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-3 rounded-xl border border-slate-200">
+              <div class="space-y-1">
+                <label class="text-xs font-bold text-slate-700">选择 sep (分隔符)：</label>
+                <select id="selSep" onchange="updatePrintConsole()" class="w-full text-xs font-mono bg-white border border-slate-300 p-1.5 rounded-lg">
+                  <option value=" ">单个空格 " "</option>
+                  <option value=", ">逗号 ", "</option>
+                  <option value="---">横杠 "---"</option>
+                  <option value="***">星号 "***"</option>
+                  <option value="\\n">换行符 \\n</option>
+                  <option value="">空串 ""</option>
+                </select>
+              </div>
+              <div class="space-y-1">
+                <label class="text-xs font-bold text-slate-700">选择 end (结尾符)：</label>
+                <select id="selEnd" onchange="updatePrintConsole()" class="w-full text-xs font-mono bg-white border border-slate-300 p-1.5 rounded-lg">
+                  <option value="\\n">默认换行 \\n</option>
+                  <option value=" ">单个空格 " " (不换行)</option>
+                  <option value=", ">逗号 ", "</option>
+                  <option value="!">感叹号 "!"</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+              <div class="bg-slate-900 text-emerald-400 p-3 rounded-xl font-mono text-xs">
+                <div class="text-slate-400 mb-1"># 生成代码：</div>
+                <div id="printCodePreview">print("苹果", "香蕉", "西瓜", sep=" ", end="\\n")\\nprint("下一行文字")</div>
+              </div>
+              <div class="bg-black text-slate-100 p-3 rounded-xl font-mono text-xs">
+                <div class="text-slate-400 mb-1">模拟终端输出 (Console)：</div>
+                <div id="printConsolePreview" class="text-emerald-300 whitespace-pre-wrap">苹果 香蕉 西瓜\\n下一行文字</div>
+              </div>
+            </div>
+            <div class="bg-rose-50 border border-rose-200 p-3 rounded-xl text-xs text-rose-950">
+              <strong>🛡️ 4. GESP 做题避坑：</strong>在循环输出数列时，千万记得写 <code class="bg-white px-1 font-bold">end=" "</code>，否则自动评测机按行对比直接判 0 分！
+            </div>
+          </article>
+
+          <!-- input 3+5=35 避坑与 split+map -->
+          <article class="bg-white rounded-2xl border-2 border-emerald-200 p-5 shadow-xs space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+              <h3 class="font-extrabold text-base text-slate-900">input() 经典 3+5=35 错题与 map(int, input().split()) 流程拆解</h3>
+              <span class="bg-rose-100 text-rose-800 text-[10px] font-bold px-2 py-0.5 rounded">机考必考</span>
+            </div>
+            <div class="bg-rose-50 p-3 rounded-xl text-xs text-rose-950 space-y-1">
+              <strong>⚠️ 警惕经典陷阱：input() 读进来的永远是字符串！</strong>
+              <div>若直接 a = input(); b = input(); print(a + b)，输入 3 和 5，相加结果是 <span class="bg-rose-600 text-white px-1.5 py-0.5 rounded font-mono font-bold">"35"</span>！必须用 <code class="bg-white px-1 font-bold">int()</code> 转换！</div>
+            </div>
+            <!-- split map 四步拆解 -->
+            <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-2">
+              <div class="font-bold text-xs text-slate-800">🔥 a, b = map(int, input().split()) 步骤拆解（输入 "10 20"）：</div>
+              <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
+                <div class="bg-white border p-2 rounded-lg"><div class="font-bold text-emerald-600">1. input()</div><div>得到字符串 "10 20"</div></div>
+                <div class="bg-white border p-2 rounded-lg"><div class="font-bold text-emerald-600">2. .split()</div><div>拆成 ["10", "20"]</div></div>
+                <div class="bg-white border p-2 rounded-lg"><div class="font-bold text-emerald-600">3. map(int)</div><div>每个元素脱掉引号变整数 10, 20</div></div>
+                <div class="bg-white border p-2 rounded-lg"><div class="font-bold text-emerald-600">4. 赋值 a, b</div><div>a = 10, b = 20 解包成功！</div></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      \`;
+    }
+
+    function updatePrintConsole() {
+      const sep = document.getElementById('selSep').value;
+      const end = document.getElementById('selEnd').value;
+      const code = \`print("苹果", "香蕉", "西瓜", sep="\${sep.replace(/\\n/g, '\\\\n')}", end="\${end.replace(/\\n/g, '\\\\n')}")\\nprint("👉 下一行文字")\`;
+      document.getElementById('printCodePreview').innerText = code;
+      const line1 = ["苹果", "香蕉", "西瓜"].join(sep) + (end === '\\n' ? '\\n' : end);
+      document.getElementById('printConsolePreview').innerText = line1 + "👉 下一行文字";
+    }
+
+    function getStandardKnowledgeHtml(catId) {
+      return \`
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <h3 class="font-extrabold text-base text-slate-800">当前分类知识点快速索引</h3>
+          <p class="text-xs text-slate-500">点击页面上方按钮可随时查阅完整 10 套 GESP 机考做题必背模板！</p>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 font-mono text-xs text-slate-700">
+            提示：欢迎下载本单文件离线版，在无网络环境双击随时复习。
+          </div>
+        </div>
+      \`;
+    }
+
+    function renderTemplates() {
+      document.getElementById('tplList').innerHTML = TEMPLATES.map(t => \`
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs space-y-2">
+          <div class="flex justify-between items-center">
+            <h4 class="font-extrabold text-sm text-slate-900">\${t.title}</h4>
+            <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded">\${t.gespLevel}</span>
+          </div>
+          <pre class="bg-slate-900 text-emerald-400 p-3 rounded-xl text-xs font-mono overflow-x-auto">\${t.code}</pre>
+          <div class="text-xs text-blue-900 bg-blue-50 p-2.5 rounded-lg"><strong>📖 原理解析：</strong>\${t.explanation}</div>
+          <div class="text-xs text-rose-900 bg-rose-50 p-2.5 rounded-lg"><strong>⚠️ 做题避坑：</strong>\${t.pitfall}</div>
+        </div>
+      \`).join('');
+    }
+
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    function handleSearch(q) {
+      const res = TEMPLATES.filter(t => t.title.toLowerCase().includes(q.toLowerCase()) || t.code.toLowerCase().includes(q.toLowerCase()));
+      document.getElementById('searchResults').innerHTML = res.map(r => \`
+        <div class="p-3 hover:bg-slate-50 cursor-pointer" onclick="closeModal('searchModal'); openModal('tplModal');">
+          <div class="font-bold text-xs text-slate-900">\${r.title}</div>
+          <div class="text-[11px] text-slate-500">\${r.gespLevel}</div>
+        </div>
+      \`).join('');
+    }
+
+    // 初始化
+    window.onload = init;
+  </script>
+</body>
+</html>

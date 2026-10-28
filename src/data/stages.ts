@@ -1,0 +1,48 @@
+import { Stage } from '../types';
+
+export const STAGES: Stage[] = [
+  {
+    id: 'turtle',
+    title: '启蒙阶段',
+    subtitle: 'Python Turtle 海龟绘图',
+    gespLevels: '少儿兴趣启蒙',
+    badge: '趣味图形',
+    accentColor: 'emerald',
+    bgGradient: 'from-emerald-500 to-teal-600',
+    icon: 'fa-solid fa-shapes',
+    description: '通过指挥可爱的小海龟爬行、旋转、落笔着色，建立生动的空间直觉与代码执行逻辑！',
+  },
+  {
+    id: 'gesp13',
+    title: '入门阶段',
+    subtitle: 'GESP 1-3 级核心实战',
+    gespLevels: 'GESP 1 ~ 3 级 (⭐重点突破)',
+    badge: '做题基本功',
+    accentColor: 'blue',
+    bgGradient: 'from-blue-500 to-indigo-600',
+    icon: 'fa-solid fa-code',
+    description: '做题得分核心地带！攻克输入输出避坑、变量运算、三大流程控制、字符串切片与列表操作。',
+  },
+  {
+    id: 'gesp46',
+    title: '基础阶段',
+    subtitle: 'GESP 4-6 级进阶编程',
+    gespLevels: 'GESP 4 ~ 6 级',
+    badge: '函数与算法',
+    accentColor: 'violet',
+    bgGradient: 'from-purple-500 to-violet-600',
+    icon: 'fa-solid fa-brain',
+    description: '掌握 def 函数封装、字典集合高级容器、进制位运算、文件异常、二分查找与递归排序！',
+  },
+  {
+    id: 'gesp68',
+    title: '提高阶段',
+    subtitle: 'GESP 6-8 级高阶冲刺',
+    gespLevels: 'GESP 6 ~ 8 级',
+    badge: '数据结构与DP',
+    accentColor: 'amber',
+    bgGradient: 'from-amber-500 to-orange-600',
+    icon: 'fa-solid fa-rocket',
+    description: '冲刺最高等级！深入面向对象 OOP、栈与队列、树与图遍历 (DFS/BFS) 及经典动态规划。',
+  },
+];

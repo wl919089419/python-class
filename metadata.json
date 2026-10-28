@@ -1,0 +1,6 @@
+{
+  "name": "PyKids - 少儿 Python & GESP 考级互动速查站",
+  "description": "专为小学生打造的 Python 学习与 GESP 考级交互式速查平台，涵盖海龟画图、做题必备输入输出实验室、算法数据结构与真题避坑指南。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
