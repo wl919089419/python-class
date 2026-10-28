@@ -220,15 +220,9 @@ export const InputLab: React.FC = () => {
                 <i className="fa-regular fa-copy mr-1"></i>复制代码
               </button>
             </div>
-            <pre className="text-emerald-400">
-{`# 1. 一行正好两个整数时（直接解包赋值给 a, b）
-a, b = map(int, input().split())
-print("两数相加:", a + b)
-
-# 2. 一行有若干个未知数量的整数时（转为列表）
-nums = list(map(int, input().split()))
-print("输入了", len(nums), "个数字，最大值是", max(nums))`}
-            </pre>
+            <PythonCodeView
+              code={`# 1. 一行正好两个整数时（直接解包赋值给 a, b）\na, b = map(int, input().split())\nprint("两数相加:", a + b)\n\n# 2. 一行有若干个未知数量的整数时（转为列表）\nnums = list(map(int, input().split()))\nprint("输入了", len(nums), "个数字，最大值是", max(nums))`}
+            />
           </div>
         </div>
       )}

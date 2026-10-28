@@ -56,18 +56,20 @@ export const Header: React.FC<HeaderProps> = ({
               </kbd>
             </button>
 
-            {/* GESP Templates Cheat Sheet */}
-            <button
-              onClick={onOpenTemplates}
-              aria-label="做题常用代码模板速查"
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs sm:text-sm font-bold shadow-sm shadow-amber-500/20 transition-all cursor-pointer"
-            >
-              <i className="fa-solid fa-file-code"></i>
-              <span>做题模板速查</span>
-              <span className="bg-amber-600/60 text-amber-100 text-[10px] px-1.5 py-0.2 rounded-full font-mono">
-                10套
-              </span>
-            </button>
+            {/* GESP Templates Cheat Sheet - hide in enlightenment stage (turtle) */}
+            {currentStageId !== 'turtle' && (
+              <button
+                onClick={onOpenTemplates}
+                aria-label="做题常用代码模板速查"
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs sm:text-sm font-bold shadow-sm shadow-amber-500/20 transition-all cursor-pointer"
+              >
+                <i className="fa-solid fa-file-code"></i>
+                <span>做题模板速查</span>
+                <span className="bg-amber-600/60 text-amber-100 text-[10px] px-1.5 py-0.2 rounded-full font-mono">
+                  10套
+                </span>
+              </button>
+            )}
 
             {/* Offline HTML Export */}
             <button

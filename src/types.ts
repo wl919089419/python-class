@@ -18,6 +18,7 @@ export type InteractiveType =
   | 'print_lab'     // Specialized print() parameter lab
   | 'input_lab'     // Specialized input() traps & 3-step pipeline visualizer
   | 'fstring_lab'   // Specialized f-string interactive lab
+  | 'for_lab'       // Specialized for...in loop essence & animated step-by-step lab
   | 'slice_lab'     // Visual string / list index and slice visualizer
   | 'custom';
 

@@ -137,15 +137,17 @@ export default function App() {
             </p>
           </div>
 
-          <div className="flex items-center space-x-3 z-10">
-            <button
-              onClick={() => setIsTemplateModalOpen(true)}
-              className="px-4 py-2 bg-white text-slate-900 hover:bg-slate-50 text-xs sm:text-sm font-bold rounded-xl shadow-md transition-transform hover:scale-105 cursor-pointer flex items-center space-x-1.5"
-            >
-              <i className="fa-solid fa-lightbulb text-amber-500"></i>
-              <span>做题模板速查</span>
-            </button>
-          </div>
+          {currentStageId !== 'turtle' && (
+            <div className="flex items-center space-x-3 z-10">
+              <button
+                onClick={() => setIsTemplateModalOpen(true)}
+                className="px-4 py-2 bg-white text-slate-900 hover:bg-slate-50 text-xs sm:text-sm font-bold rounded-xl shadow-md transition-transform hover:scale-105 cursor-pointer flex items-center space-x-1.5"
+              >
+                <i className="fa-solid fa-lightbulb text-amber-500"></i>
+                <span>做题模板速查</span>
+              </button>
+            </div>
+          )}
 
           {/* Background watermark icon */}
           <i
@@ -221,23 +223,27 @@ export default function App() {
         </p>
       </footer>
 
-      {/* Floating Action Button for Code Templates */}
-      <aside aria-label="快捷悬浮菜单" className="fixed bottom-6 right-6 z-30 flex flex-col items-end space-y-2">
-        <button
-          onClick={() => setIsTemplateModalOpen(true)}
-          className="flex items-center space-x-2 px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-xl shadow-amber-500/30 transition-all hover:scale-105 cursor-pointer border border-amber-300/40"
-          title="打开 GESP 做题高频代码模板速查"
-        >
-          <i className="fa-solid fa-file-code text-base"></i>
-          <span>做题模板速查 📑</span>
-        </button>
-      </aside>
+      {/* Floating Action Button for Code Templates - 启蒙阶段 (turtle) 无需出现 */}
+      {currentStageId !== 'turtle' && (
+        <aside aria-label="快捷悬浮菜单" className="fixed bottom-6 right-6 z-30 flex flex-col items-end space-y-2">
+          <button
+            onClick={() => setIsTemplateModalOpen(true)}
+            className="flex items-center space-x-2 px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-xl shadow-amber-500/30 transition-all hover:scale-105 cursor-pointer border border-amber-300/40"
+            title="打开 GESP 做题高频代码模板速查"
+          >
+            <i className="fa-solid fa-file-code text-base"></i>
+            <span>做题模板速查 📑</span>
+          </button>
+        </aside>
+      )}
 
-      {/* Floating Canvas Drawer & Modals */}
-      <FloatingTurtleCanvas
-        isOpen={isTurtleDrawerOpen}
-        onToggle={() => setIsTurtleDrawerOpen(!isTurtleDrawerOpen)}
-      />
+      {/* Floating Canvas Drawer - 其他阶段不需要出现海龟悬浮画板，仅在启蒙阶段 (turtle) 出现 */}
+      {currentStageId === 'turtle' && (
+        <FloatingTurtleCanvas
+          isOpen={isTurtleDrawerOpen}
+          onToggle={() => setIsTurtleDrawerOpen(!isTurtleDrawerOpen)}
+        />
+      )}
 
       <CodeTemplateModal
         isOpen={isTemplateModalOpen}

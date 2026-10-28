@@ -673,33 +673,41 @@ else:
       },
       {
         id: 'api-for-range',
-        name: 'for ... in range()',
-        title: '计数循环与左闭右开大坑',
+        name: 'for ... in ... 循环本质与 range()',
+        title: 'for 循环本质：遍历可迭代容器的机械臂',
         stageId: 'gesp13',
         categoryId: 'gesp13-control-structures',
         level: 'GESP 1-2级必考',
         difficulty: '⭐⭐',
-        summary: '设定循环计数器，range(start, stop, step) 像一台自动打卡机，忠实地生成整数序列！',
-        syntax: 'range(stop)\nrange(start, stop[, step])',
-        returnType: 'range object (迭代序列)',
+        summary: '【循环本质大揭秘】：Python 的 for 循环不是冷冰冰的数字计数器，而是“逐个取物遍历器”！它像一条机械臂流水线：for item in 可迭代容器:，每次从容器（列表、字符串、range、元组）中按顺序抓取一个元素塞进变量 item，执行缩进代码；容器中的物品拿光了，循环立即优雅结束！',
+        syntax: 'for 变量 in 可迭代容器:\n    执行缩进代码块\n\n# 常见容器遍历形式：\nfor x in [10, 20, 30]:      # 列表遍历\nfor ch in "PYTHON":         # 字符串逐字拆解\nfor i in range(5):          # 数字序列 0, 1, 2, 3, 4 (不含 5)\nfor k in range(1, 10, 2):   # 步长为 2 遍历奇数',
+        returnType: 'None (遍历容器)',
         params: [
-          { name: 'start', type: 'int', required: false, defaultVal: '0', desc: '起始数字（包含）' },
-          { name: 'stop', type: 'int', required: true, desc: '结束数字（绝对不包含！在 stop 前一位停止）' },
-          { name: 'step', type: 'int', required: false, defaultVal: '1', desc: '步长，正数递增，负数倒序递减' },
+          { name: '变量', type: 'variable', required: true, desc: '暂存抽屉，每一轮循环自动接收从容器中掏出的当前元素' },
+          { name: '可迭代容器', type: 'iterable', required: true, desc: '任何可被遍历的对象，如 list 列表、str 字符串、range 序列等' },
+          { name: 'range(start, stop[, step])', type: 'range object', required: false, desc: '数字序列发生器：左闭右开 [start, stop)，永远不含 stop！' },
         ],
-        codeExample: `# 1. 单参数：range(5) 生成 0, 1, 2, 3, 4 (共 5 个，不含 5)
-print(list(range(5)))
+        codeExample: `# 1. 列表遍历：从水果篮逐个掏水果
+fruits = ["🍎 苹果", "🍌 香蕉", "🍇 葡萄"]
+for item in fruits:
+    print("吃到:", item)
 
-# 2. 双参数：range(1, 5) 生成 1, 2, 3, 4 (不含 5)
-print(list(range(1, 5)))
+# 2. 字符串也是容器：逐个字符取字
+for ch in "CODE":
+    print("字母:", ch)
 
-# 3. 倒序递减（做题常考）：range(5, 0, -1) 生成 5, 4, 3, 2, 1 (不含 0)
-print(list(range(5, 0, -1)))`,
-        expectedOutput: '[0, 1, 2, 3, 4]\n[1, 2, 3, 4]\n[5, 4, 3, 2, 1]',
-        interactiveType: 'terminal',
-        pitfall: '【考级第一大坑】：range 是“左闭右开区间 [start, stop)”！例如 range(1, 100) 永远不包含 100，它只跑到 99！如果做题要求计算 1 到 n 的和，循环必须写 range(1, n + 1)！',
-        examTip: 'GESP 考级选择题几乎每套都有考 range 边界与循环执行次数的题目。',
-        tags: ['for', 'range', '左闭右开', '循环次数', '倒序'],
+# 3. range(5) 计数器：生成 0, 1, 2, 3, 4 (共 5 次，绝不含 5！)
+for i in range(5):
+    print("计数:", i)
+
+# 4. 带步长：range(1, 10, 2) 打印奇数
+for odd in range(1, 10, 2):
+    print("奇数:", odd)`,
+        expectedOutput: '吃到: 🍎 苹果\n吃到: 🍌 香蕉\n吃到: 🍇 葡萄\n字母: C\n字母: O\n字母: D\n字母: E\n计数: 0\n计数: 1\n计数: 2\n计数: 3\n计数: 4',
+        interactiveType: 'for_lab',
+        pitfall: '【考级三大致命坑】：\n1. 【左闭右开大坑】：range(1, 10) 只生成 1 到 9，绝对不包含 10！如果做题要求算 1 到 n 的和，循环必须写 range(1, n + 1)！\n2. 【循环内改变量无用】：在循环体内写 i = 999 并不会跳过循环！下一轮迭代时 Python 依然会按部就班从容器掏出下一个原值覆盖它！\n3. 【遍历中删改列表】：绝对不要在 for x in my_list 循环内部使用 remove() 或 pop() 删除当前列表元素，这会导致遍历指针错位漏项！',
+        examTip: 'GESP 考级选择题必考两类核心：① 循环执行次数计算；② range 边界与步长判定；③ 字符串与列表累计求和。',
+        tags: ['for', 'in', '遍历', 'range', '循环本质', '左闭右开', '机械臂'],
       },
       {
         id: 'api-while-loop',
