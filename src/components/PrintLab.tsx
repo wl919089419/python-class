@@ -317,7 +317,7 @@ export const PrintLab: React.FC = () => {
       )}
 
       {/* Code & Simulated Console Display */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="flex flex-col gap-4">
         {/* Python Code Card */}
         <div className="bg-slate-900 rounded-xl p-4 text-white font-mono text-xs space-y-2 border border-slate-800 shadow-md">
           <div className="flex items-center justify-between text-slate-400 border-b border-slate-800 pb-2">

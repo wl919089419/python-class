@@ -412,66 +412,36 @@ print(f"保留两位小数: {pi:.2f}") # 输出: 保留两位小数: 3.14`,
         tags: ['print', 'sep', 'end', '换行', '格式化'],
       },
       {
-        id: 'api-input-trap',
-        name: 'input() 字符串类型陷阱',
-        title: 'input() 原理与 3+5=35 血泪教训',
-        stageId: 'gesp13',
-        categoryId: 'gesp13-io-lab',
-        level: 'GESP 1级必考',
-        difficulty: '⭐⭐',
-        summary: 'Python 的耳朵！但请千万记住：它听进来的所有东西，哪怕是纯数字，也全都是带引号的“字符串(str)”！',
-        syntax: 's = input(prompt="")',
-        returnType: 'str (注意：永远是字符串！)',
-        params: [
-          { name: 'prompt', type: 'str', required: false, defaultVal: '""', desc: '屏幕提示文本。但在 GESP 考级做题中千万不要写！' },
-        ],
-        codeExample: `# ❌ 错误示范（考级做题 0 分名场面）：
-a = input() # 输入 3，此时 a 是 "3"
-b = input() # 输入 5，此时 b 是 "5"
-print(a + b) # 结果不是 8，而是 "35" 文本拼接！
-
-# ✅ 正确做法：必须用 int() 脱掉字符串外套
-x = int(input())
-y = int(input())
-print(x + y) # 正确输出: 8`,
-        expectedOutput: '错误做法输出: 35\n正确做法输出: 8',
-        interactiveType: 'input_lab',
-        pitfall: '【考级一票否决坑】：很多同学在本地 PyCharm 练习时习惯写 a = int(input("请输入数字:"))。而在 GESP、CSP 等在线机考平台上，评测机是自动对比输出的，提示语 "请输入数字:" 会被当作多余的错误字符直接判定 0 分！做题永远只写 int(input())！',
-        examTip: 'GESP 1 级判断题与编程题第 1 题必查知识点。',
-        tags: ['input', 'str', 'int', '类型转换', '机考规范'],
-      },
-      {
-        id: 'api-map-split',
-        name: 'map(int, input().split())',
-        title: '考级做题核心三输入模板',
+        id: 'api-input-map',
+        name: 'input() 与 map() 输入全解',
+        title: 'input() 字符串避坑与 map() 输入流水线全解',
         stageId: 'gesp13',
         categoryId: 'gesp13-io-lab',
         level: 'GESP 1-3级必考',
         difficulty: '⭐⭐⭐',
-        summary: 'GESP 编程大题中 90% 是一行输入两个或多个用空格隔开的数字，这个模板是每一位考级选手必须刻进DNA的本能！',
-        syntax: 'a, b = map(int, input().split())\nnums = list(map(int, input().split()))',
-        returnType: 'tuple / list[int]',
+        summary: '彻底搞懂从单数读取到一行多数字读取的全套逻辑！掌握 input() 的字符串引号陷阱与 int() 转换，以及 a, b = map(int, input().split()) 自动化传送带流水线机制与底层原理。',
+        syntax: '# 1. 单数读取（必须用 int 脱去引号）\nx = int(input())\n\n# 2. 一行两到三个数字（解包赋值）\na, b = map(int, input().split())\n\n# 3. 一行未知数量数字（转为整数列表）\nnums = list(map(int, input().split()))',
+        returnType: 'int / tuple / list[int]',
         params: [
-          { name: 'int', type: 'type', required: true, desc: '目标转换函数，将每个分割后的子项转成整数' },
-          { name: 'input().split()', type: 'list[str]', required: true, desc: '读入一行并按空格拆分出来的字符串列表' },
+          { name: 'input()', type: 'str', required: true, desc: '键盘输入一整行原始文本（注意：永远是自带双引号的字符串 str）' },
+          { name: '.split()', type: 'list[str]', required: false, defaultVal: '按空格切分', desc: '把一行长字符串按空格拆碎成独立的子字符串列表' },
+          { name: 'map(int, ...)', type: 'iterator', required: false, desc: '自动化加工传送带，让 int() 批量将列表中每个子字符串转化为整数' },
         ],
-        codeExample: `# 模板 1: 单行单个数字
-n = int(input())
+        codeExample: `# 1. 读入单数（千万不要加提示语如 input("请输入:")）
+x = int(input())
 
-# 模板 2: 单行两到三个数字（解包赋值）
-# 输入: 10 20
+# 2. 读入一行两个由空格隔开的整数（解包赋值）
 a, b = map(int, input().split())
 print("两数之和:", a + b)
 
-# 模板 3: 单行未知数量数字（读为整数列表）
-# 输入: 1 5 3 9 2
+# 3. 读入一行未知数量的整数（封装为列表）
 nums = list(map(int, input().split()))
-print("最大值:", max(nums))`,
-        expectedOutput: '两数之和: 30\n最大值: 9',
+print("总个数:", len(nums), "最大值:", max(nums))`,
+        expectedOutput: '两数之和: 30\n总个数: 5 最大值: 9',
         interactiveType: 'input_lab',
-        pitfall: '1. 如果一行只有 2 个数字，但你写了 a, b, c = map(...)，会报 ValueError: not enough values to unpack！\n2. map 返回的是一个迭代器对象，如果想用索引访问下标 nums[0]，必须用 list(...) 包裹转为列表！',
-        examTip: 'GESP 2 级、3 级机考真题 100% 出现，不熟练直接无法开始做题。',
-        tags: ['split', 'map', '多输入', '机考模板'],
+        pitfall: '1. 【考级致命扣分坑】：严禁写 input("请输入数字:")！在线评测机是自动文本比对，提示词会导致输出错位直接判 0 分！\n2. 不能写 int(input().split())！因为 int() 一次只能处理单个数字，吞不下一整箱列表，会报 TypeError！必须用 map 批量处理。\n3. map 生成的是迭代器对象，如果后续需要通过下标 nums[0] 访问或多次求值，必须用 list(...) 包裹转为真实列表！',
+        examTip: 'GESP 1-3 级 100% 必考！选择题必考 "3"+"5"="35" 陷阱，编程题第 1 题必写 input() 或 a, b = map(int, input().split())。',
+        tags: ['input', 'map', 'split', 'str', 'int', '类型转换', '多输入', '机考规范', '机考模板'],
       },
       {
         id: 'api-fstring-lab',

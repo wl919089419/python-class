@@ -122,14 +122,14 @@ export function simulateInputPipeline(rawInput: string): {
 
   const step4: InputPipelineStep = {
     stepIndex: 4,
-    title: '第四步：打包为列表或多变量解包赋值',
+    title: '第四步：打包为列表或多变量独立解包赋值',
     description: integers.length >= 2
-      ? `解包赋值成功！a = ${integers[0]}, b = ${integers[1]}${integers[2] !== undefined ? `, c = ${integers[2]}` : ''}`
+      ? `解包赋值成功！各变量独立存放：a = ${integers[0]}, b = ${integers[1]}${integers[2] !== undefined ? `, c = ${integers[2]}` : ''}（注意：这是独立变量，并非字典）`
       : `转为整数列表：nums = [${integers.join(', ')}]`,
     data: integers.length >= 2
       ? { a: integers[0], b: integers[1], ...(integers[2] !== undefined ? { c: integers[2] } : {}) }
       : integers,
-    dataType: integers.length >= 2 ? '多变量解包赋值 (Unpacking)' : 'list[int]',
+    dataType: integers.length >= 2 ? '多变量独立解包 (Unpacking，非字典)' : 'list[int]',
     isError: !!errorFound,
   };
 
