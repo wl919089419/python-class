@@ -85,10 +85,10 @@ export function renderPythonLine(line: string, lineIndex: number): React.ReactNo
 
   return (
     <div key={lineIndex} className="table-row leading-relaxed font-mono">
-      <span className="table-cell pr-4 select-none text-slate-600 text-right text-[11px] w-6">
+      <span className="table-cell pr-3 select-none text-slate-600 text-right text-[11px] w-6 align-top">
         {lineIndex + 1}
       </span>
-      <span className="table-cell">
+      <span className="table-cell break-words whitespace-pre-wrap align-top">
         {tokens}
         {commentPart && (
           <span className="text-slate-400 italic">

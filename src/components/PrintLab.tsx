@@ -69,12 +69,12 @@ export const PrintLab: React.FC = () => {
     if (demoMode === 'standard') {
       const sepStr = sepType === 'space' ? '' : `, sep="${actualSep.replace(/\n/g, '\\n')}"`;
       const endStr = endType === 'newline' ? '' : `, end="${actualEnd.replace(/\n/g, '\\n')}"`;
-      return `# 标准 print() 多变量与自定义连接/结尾符\nprint("${val1}", "${val2}", "${val3}"${sepStr}${endStr})\nprint("👉 下一行文字（观察上一行的 end 是否换行）")`;
+      return `# print() 多变量与 sep、end\nprint("${val1}", "${val2}", "${val3}"${sepStr}${endStr})\nprint("👉 下一行文字")  # 观察上一行 end 是否换行`;
     } else if (demoMode === 'loop') {
       const loopEnd = loopEndChoice === 'space' ? 'end=" "' : 'end="\\n"';
-      return `# 循环输出对比：默认换行 \\n vs 不换行空格 end=" "\nfor i in range(1, 6):\n    print(i, ${loopEnd})\n\n# 注意：若使用了 end=" "，循环结束后建议空打一个 print() 补齐换行！\nprint()`;
+      return `# 循环输出对比：默认换行 \\n vs end=" "\nfor i in range(1, 6):\n    print(i, ${loopEnd})\n# 循环结束后打 print() 补换行\nprint()`;
     } else {
-      return `# 格式化输出浮点数（保留指定小数位数）\npi = ${piValue}\n# 方式 1: f-string 语法糖（GESP 推荐，清晰好写）\nprint(f"保留 ${decimalPlaces} 位小数: {pi:.${decimalPlaces}f}")\n\n# 方式 2: 百分号经典格式化\nprint("%%.${decimalPlaces}f" %% pi)`;
+      return `# 浮点数保留小数位数\npi = ${piValue}\n# 方式 1: f-string (推荐)\nprint(f"保留 {decimalPlaces} 位: {pi:.${decimalPlaces}f}")\n# 方式 2: 百分号经典格式化\nprint("%.${decimalPlaces}f" % pi)`;
     }
   };
 
@@ -82,7 +82,7 @@ export const PrintLab: React.FC = () => {
   const computeOutput = (): string => {
     if (demoMode === 'standard') {
       const line1 = [val1, val2, val3].join(actualSep) + actualEnd;
-      const line2 = '👉 下一行文字（观察上一行的 end 是否换行）';
+      const line2 = '👉 下一行文字';
       return line1 + line2;
     } else if (demoMode === 'loop') {
       const numbers = [1, 2, 3, 4, 5];
@@ -90,7 +90,7 @@ export const PrintLab: React.FC = () => {
       return numbers.join(delim) + delim + (loopEndChoice === 'space' ? '\n[换行完成]' : '');
     } else {
       const formatted = piValue.toFixed(decimalPlaces);
-      return `保留 ${decimalPlaces} 位小数: ${formatted}\n${formatted}`;
+      return `保留 ${decimalPlaces} 位: ${formatted}\n${formatted}`;
     }
   };
 
