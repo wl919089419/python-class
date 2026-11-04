@@ -545,12 +545,204 @@ print(bool("False")) # True！(注意：里面有字符就为真！)`,
   },
   {
     id: 'gesp13-operators-math',
-    title: '运算符与数学函数',
+    title: '运算符与 math 数学库',
     stageId: 'gesp13',
     icon: 'fa-solid fa-calculator',
     badge: '算术与运算',
-    description: '+ - * / // % ** 运算符优先级，以及 abs(), max(), min(), round(), pow()。',
+    description: '+ - * / // % ** 运算符优先级，内置数学函数，以及 math 标准库常用函数全能实验室 (sqrt, ceil, floor, gcd, lcm, factorial, pi, dist)。',
     items: [
+      {
+        id: 'api-math-lab',
+        name: 'math 核心库交互实验室',
+        title: 'math 常用函数全能互动演练',
+        stageId: 'gesp13',
+        categoryId: 'gesp13-operators-math',
+        level: 'GESP 1-4级必考',
+        difficulty: '⭐⭐⭐',
+        summary: 'Python 标准数学库！只需一句 import math，立即拥有开方 sqrt、向上向下取整 ceil/floor、最大公约数 gcd、最小公倍数 lcm、阶乘 factorial 与几何常数 pi 的强大数学超能力！',
+        syntax: 'import math\n\nmath.sqrt(x) / math.isqrt(x)\nmath.ceil(x) / math.floor(x) / math.trunc(x)\nmath.gcd(a, b) / math.lcm(a, b)\nmath.factorial(n)\nmath.dist(p1, p2)\nmath.pi / math.isclose(a, b)',
+        returnType: 'number / int / float',
+        params: [
+          { name: 'import math', type: 'module', required: true, desc: '导入 Python 内置的数学函数模块' },
+          { name: 'math.sqrt(x)', type: 'float', required: false, desc: '计算 x 的平方根（x 必须 >= 0）' },
+          { name: 'math.ceil(x)', type: 'int', required: false, desc: '向上取整天花板，返回大于等于 x 的最小整数' },
+          { name: 'math.floor(x)', type: 'int', required: false, desc: '向下取整地板，返回小于等于 x 的最大整数' },
+          { name: 'math.gcd(a, b)', type: 'int', required: false, desc: '计算两个或多个整数的最大公约数' },
+        ],
+        codeExample: `import math
+
+# 1. 开平方根
+print("根号 49 =", math.sqrt(49))      # 7.0 (float)
+print("整数开方 50 =", math.isqrt(50))   # 7 (int)
+
+# 2. 向上取整 (做题神器：租车排队问题)
+students, cap = 45, 10
+cars = math.ceil(students / cap)
+print(f"45人每车10人需租 {cars} 辆车") # 5 辆车
+
+# 3. 最大公约数与最小公倍数
+print("gcd(24, 36) =", math.gcd(24, 36)) # 12
+print("lcm(24, 36) =", math.lcm(24, 36)) # 72
+
+# 4. 阶乘与圆面积
+print("5! =", math.factorial(5))         # 120
+print("半径3的圆面积 =", round(math.pi * 3**2, 2)) # 28.27`,
+        expectedOutput: '根号 49 = 7.0\n整数开方 50 = 7\n45人每车10人需租 5 辆车\ngcd(24, 36) = 12\nlcm(24, 36) = 72\n5! = 120\n半径3的圆面积 = 28.27',
+        interactiveType: 'math_lab',
+        pitfall: '1. 【开方负数崩溃】：math.sqrt(-9) 会直接报 ValueError: math domain error 导致程序闪退崩溃！做题前必须确保被开方数是非负数。\n2. 【租车进位陷阱】：千万不能写 45 // 10（整除会丢失余数 5 个人导致判定 0 分），必须写 math.ceil(45 / 10) 或 (n + k - 1) // k！\n3. 【浮点数判等大坑】：判断题常考 0.1 + 0.2 == 0.3，结果是 False！安全比较必须使用 math.isclose(0.1 + 0.2, 0.3)！',
+        examTip: 'GESP 1-4 级全覆盖考点：1-2 级考整除与取整、圆面积；3-4 级考素数 √n 遍历提速、最大公约数求法与阶乘。',
+        tags: ['math', 'sqrt', 'isqrt', 'ceil', 'floor', 'gcd', 'lcm', 'factorial', 'pi', 'dist', 'isclose', '数学库', '机考核心'],
+      },
+      {
+        id: 'api-math-sqrt',
+        name: 'math.sqrt() & math.isqrt()',
+        title: '平方根与素数判定遍历提速',
+        stageId: 'gesp13',
+        categoryId: 'gesp13-operators-math',
+        level: 'GESP 2-4级必考',
+        difficulty: '⭐⭐',
+        summary: 'math.sqrt(x) 算出浮点平方根，math.isqrt(n) 直接得到纯整数根！是判断质数、两点距离、勾股定理的核心工具。',
+        syntax: 'math.sqrt(x)   # 返回 float 浮点平方根\nmath.isqrt(n)  # 返回 int 整数平方根 (Python 3.8+)',
+        returnType: 'float / int',
+        params: [
+          { name: 'x', type: 'number', required: true, desc: '待开方的非负数 (必须 >= 0，否则报 ValueError)' },
+        ],
+        codeExample: `import math
+
+# 1. 基础开方演示
+print(math.sqrt(16))   # 输出: 4.0 (注意返回值是浮点数)
+print(math.sqrt(50))   # 输出: 7.0710678118654755
+print(math.isqrt(50))  # 输出: 7 (纯整数，向下截断)
+
+# 2. GESP 质数/素数高效判定（关键考点：只需遍历至 √n）
+def is_prime(n):
+    if n <= 1:
+        return False
+    # 循环上界加 1 防止漏掉平方根本身
+    for i in range(2, int(math.sqrt(n)) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+print("97 是质数吗?", is_prime(97)) # True`,
+        expectedOutput: '4.0\n7.0710678118654755\n7\n97 是质数吗? True',
+        interactiveType: 'terminal',
+        pitfall: '1. 负数开方报错：math.sqrt(-4) 会直接抛出 ValueError: math domain error！做题时如果变量可能为负数，必须先加 if n < 0 特判。\n2. 遍历上界漏数大坑：写 range(2, int(math.sqrt(n))) 会因为 range 左闭右开特性漏掉 √n 本身（例如 n=9 时 √9=3，只遍历到 2 就结束，导致 9 被误判成质数！），必须加 1 写成 range(2, int(math.sqrt(n)) + 1)！',
+        examTip: '利用 √n 判断素数或分解质因数，可将 O(n) 运算复杂度直接压缩到 O(√n)，是 GESP 3-4 级编程大题拿到 100 分满分不超时的关键！',
+        tags: ['math', 'sqrt', 'isqrt', '开方', '平方根', '质数', '素数', '复杂度优化'],
+      },
+      {
+        id: 'api-math-rounding',
+        name: 'math.ceil() & math.floor()',
+        title: '向上与向下取整 (租车排队神技)',
+        stageId: 'gesp13',
+        categoryId: 'gesp13-operators-math',
+        level: 'GESP 1-3级必考',
+        difficulty: '⭐⭐',
+        summary: 'ceil 像天花板一样向上进位（往正无穷靠），floor 像地板一样向下退位（往负无穷靠）。解决排队、租车、分班、分页等“有零头必须多加一个”问题的利器！',
+        syntax: 'math.ceil(x)   # 向上取整天花板\nmath.floor(x)  # 向下取整地板\nmath.trunc(x)  # 向零截断',
+        returnType: 'int',
+        params: [
+          { name: 'x', type: 'number', required: true, desc: '待取整的浮点数或数值表达式' },
+        ],
+        codeExample: `import math
+
+# 1. 基础取整对比
+print("math.ceil(3.2)  =", math.ceil(3.2))   # 输出: 4 (向上进位)
+print("math.floor(3.8) =", math.floor(3.8))  # 输出: 3 (向下退位)
+
+# 2. 负数取整差异 (考级易错判断题)
+print("math.ceil(-2.7) =", math.ceil(-2.7))   # 输出: -2 (往数轴正方向靠拢)
+print("math.floor(-2.7)=", math.floor(-2.7))  # 输出: -3 (往数轴负方向靠拢)
+
+# 3. 租车/分车经典题：45 名同学去春游，每辆客车最多乘坐 10 人
+students, capacity = 45, 10
+# ❌ 错误: students // capacity -> 4 (剩 5 个人没车坐！)
+# ✅ 正确: math.ceil(students / capacity)
+needed_cars = math.ceil(students / capacity)
+print(f"最少需要租 {needed_cars} 辆客车") # 5 辆车`,
+        expectedOutput: 'math.ceil(3.2)  = 4\nmath.floor(3.8) = 3\nmath.ceil(-2.7) = -2\nmath.floor(-2.7)= -3\n最少需要租 5 辆客车',
+        interactiveType: 'terminal',
+        pitfall: '1. 负数向下取整陷阱：math.floor(-2.3) 是 -3，而 int(-2.3) 是 -2！int() 是直接截断砍掉小数部分，floor 是向更小的负方向取整。\n2. 租车题目切记不能直接写 // 整除：45 // 10 算出来是 4，漏掉了最后余下的 5 个人！必须用 math.ceil(45 / 10)，或者纯整数写法 (n + k - 1) // k。',
+        examTip: 'GESP 1-3 级生活应用题（租车、乘船、分班、分页）高频出现。注意 math.ceil() 和 math.floor() 返回值均为整数 int。',
+        tags: ['math', 'ceil', 'floor', 'trunc', '取整', '向上取整', '向下取整', '租车题', '进位'],
+      },
+      {
+        id: 'api-math-gcd-lcm',
+        name: 'math.gcd() & math.lcm()',
+        title: '最大公约数与最小公倍数',
+        stageId: 'gesp13',
+        categoryId: 'gesp13-operators-math',
+        level: 'GESP 2-4级必考',
+        difficulty: '⭐⭐',
+        summary: 'gcd 找出两数或多个数的最大公约数，lcm 找出最小公倍数。轻松搞定分数约分、周期同步与数论题！',
+        syntax: 'math.gcd(*integers)  # 最大公约数 (Greatest Common Divisor)\nmath.lcm(*integers)  # 最小公倍数 (Least Common Multiple, Python 3.9+)',
+        returnType: 'int',
+        params: [
+          { name: '*integers', type: 'int', required: true, desc: '参与计算的一个或多个整数' },
+        ],
+        codeExample: `import math
+
+a, b = 24, 36
+g = math.gcd(a, b)
+l = math.lcm(a, b)
+
+print(f"gcd({a}, {b}) =", g) # 输出: 12
+print(f"lcm({a}, {b}) =", l) # 输出: 72
+
+# 1. 经典应用：化简分数 24/36 为最简形式
+print(f"化简最简分数: {a // g}/{b // g}") # 输出: 2/3
+
+# 2. 恒等式验证：a * b == gcd * lcm
+print("a * b == gcd * lcm ?", a * b == g * l) # True
+
+# 3. Python 3.9+ 支持传入多个数字：
+print("三个数的 gcd:", math.gcd(12, 18, 24))   # 输出: 6`,
+        expectedOutput: 'gcd(24, 36) = 12\nlcm(24, 36) = 72\n化简最简分数: 2/3\na * b == gcd * lcm ? True\n三个数的 gcd: 6',
+        interactiveType: 'terminal',
+        pitfall: '1. 版本兼容避坑：math.lcm() 是 Python 3.9 新增的函数。如果遇到老旧测评环境报 AttributeError，可用等价公式备用：(a * b) // math.gcd(a, b)。\n2. 严禁使用单斜杠除法：求 LCM 时如果写 (a * b) / math.gcd(a, b)，由于 / 是单斜杠除法，结果会带上小数点变成 72.0（浮点数），自动比对判格式错误直接判 0 分！必须写双斜杠整除 //！',
+        examTip: 'GESP 3-5 级约分、求两车同时发车周期、齿轮转动对齐等题型核心武器。',
+        tags: ['math', 'gcd', 'lcm', '最大公约数', '最小公倍数', '约分', '通分', '数论'],
+      },
+      {
+        id: 'api-math-factorial-geom',
+        name: 'math.factorial(), dist(), pi',
+        title: '阶乘、两点距离与几何圆周率',
+        stageId: 'gesp13',
+        categoryId: 'gesp13-operators-math',
+        level: 'GESP 1-4级必考',
+        difficulty: '⭐⭐',
+        summary: 'math.factorial(n) 秒算阶乘 n!，math.dist(p, q) 一行计算两点欧式距离，math.pi 提供高精度圆周率，math.isclose() 安全比较浮点数！',
+        syntax: 'math.factorial(n)       # 阶乘 n! (n 必须为非负整数)\nmath.dist(p, q)           # 两点欧式距离 (Python 3.8+)\nmath.pi                   # 圆周率常数 π (约 3.14159265...)\nmath.isclose(a, b)        # 浮点数防精度丢失比较',
+        returnType: 'int / float / bool',
+        params: [
+          { name: 'n', type: 'int', required: false, desc: '阶乘非负整数' },
+          { name: 'p, q', type: 'tuple / list', required: false, desc: '平面两点坐标 (x, y)' },
+        ],
+        codeExample: `import math
+
+# 1. 阶乘函数 (5! = 5 * 4 * 3 * 2 * 1)
+print("5! =", math.factorial(5)) # 120
+print("0! =", math.factorial(0)) # 1 (数学规定 0! 等于 1)
+
+# 2. 圆周率与面积计算 (半径 r = 3)
+r = 3
+area = math.pi * r ** 2
+print(f"半径为 {r} 的圆面积: {area:.2f}") # 28.27
+
+# 3. 平面两点间直线距离 (0, 0) 到 (3, 4)
+d = math.dist((0, 0), (3, 4))
+print("两点间直线距离:", d) # 5.0 (勾股数 3-4-5)
+
+# 4. 浮点数精度防坑 (0.1 + 0.2 是否等于 0.3)
+print("0.1 + 0.2 == 0.3 ?", 0.1 + 0.2 == 0.3)             # False! (底层微小精度误差)
+print("math.isclose() ?", math.isclose(0.1 + 0.2, 0.3))    # True! (安全比较姿势)`,
+        expectedOutput: '5! = 120\n0! = 1\n半径为 3 的圆面积: 28.27\n两点间直线距离: 5.0\n0.1 + 0.2 == 0.3 ? False\nmath.isclose() ? True',
+        interactiveType: 'terminal',
+        pitfall: '1. 阶乘非法参数报错：math.factorial(-1) 或 math.factorial(3.5) 会报 ValueError，只能传入非负整数！特别牢记 0! = 1，考级选择题高频出题！\n2. 浮点数判断题惊天大坑：Python 中 0.1 + 0.2 == 0.3 结果是 False！因为底层 IEEE 754 二进制浮点存储，0.1 + 0.2 的真实值是 0.30000000000000004。安全判等切记用 math.isclose()。',
+        examTip: 'GESP 1-4 级选择题和编程题必考：圆周长/圆面积计算、平面几何距离、阶乘尾数零、浮点数精度陷阱。',
+        tags: ['math', 'factorial', 'dist', 'pi', 'isclose', '阶乘', '两点距离', '圆周率', '浮点精度'],
+      },
       {
         id: 'api-arithmetic-ops',
         name: '+ - * / // % ** 运算符',

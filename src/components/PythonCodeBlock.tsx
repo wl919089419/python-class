@@ -8,11 +8,15 @@ const PYTHON_KEYWORDS = new Set([
   'yield', 'assert', 'raise', 'finally'
 ]);
 
-// Common builtins & Turtle functions
+// Common builtins, math & Turtle functions
 const PYTHON_FUNCTIONS = new Set([
   'print', 'input', 'int', 'float', 'str', 'list', 'map', 'range', 'len',
   'type', 'abs', 'max', 'min', 'round', 'sum', 'pow', 'sorted', 'filter',
   'open', 'tuple', 'dict', 'set', 'bool', 'enumerate', 'zip', 'chr', 'ord',
+  // math module & functions
+  'math', 'sqrt', 'isqrt', 'ceil', 'floor', 'trunc', 'gcd', 'lcm', 'factorial',
+  'fabs', 'fmod', 'dist', 'pi', 'e', 'isclose', 'sin', 'cos', 'tan',
+  'radians', 'degrees', 'log', 'log2', 'log10', 'inf', 'nan',
   // Turtle
   'turtle', 'Turtle', 'forward', 'fd', 'backward', 'bk', 'right', 'rt',
   'left', 'lt', 'goto', 'home', 'circle', 'dot', 'pensize', 'width',

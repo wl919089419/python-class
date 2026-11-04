@@ -4,6 +4,7 @@ import { PrintLab } from './PrintLab';
 import { InputLab } from './InputLab';
 import { FStringLab } from './FStringLab';
 import { ForLoopLab } from './ForLoopLab';
+import { MathLab } from './MathLab';
 import { renderPythonLine } from './PythonCodeBlock';
 
 interface ApiCardProps {
@@ -194,7 +195,7 @@ export const ApiCard: React.FC<ApiCardProps> = ({ item, onOpenTurtle }) => {
           )}
         </div>
 
-        {/* If this is the special print_lab or input_lab or fstring_lab or for_lab */}
+        {/* If this is the special print_lab or input_lab or fstring_lab or for_lab or math_lab */}
         {item.interactiveType === 'print_lab' ? (
           <PrintLab />
         ) : item.interactiveType === 'input_lab' ? (
@@ -203,6 +204,8 @@ export const ApiCard: React.FC<ApiCardProps> = ({ item, onOpenTurtle }) => {
           <FStringLab />
         ) : item.interactiveType === 'for_lab' ? (
           <ForLoopLab />
+        ) : item.interactiveType === 'math_lab' ? (
+          <MathLab />
         ) : (
           /* Standard interactive code runner with terminal output */
           <div className="space-y-2">

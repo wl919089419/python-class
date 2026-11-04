@@ -19,6 +19,7 @@ export type InteractiveType =
   | 'input_lab'     // Specialized input() traps & 3-step pipeline visualizer
   | 'fstring_lab'   // Specialized f-string interactive lab
   | 'for_lab'       // Specialized for...in loop essence & animated step-by-step lab
+  | 'math_lab'      // Specialized math library interactive lab (sqrt, ceil, floor, gcd, lcm, pi, etc.)
   | 'slice_lab'     // Visual string / list index and slice visualizer
   | 'custom';
 

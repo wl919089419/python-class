@@ -237,4 +237,36 @@ print(dp[w])`,
     explanation: '一维数组优化的核心在于内层循环必须从大到小倒着遍历（w 到 weights[i]），这样用到的 dp[j - weights[i]] 才是未被当前物品更新过的上一轮状态。',
     pitfall: '如果是 0-1 背包（每件物品只能选一次），必须逆序；如果是完全背包（物品可无限选），则必须正序遍历！千万别记反了。',
   },
+  {
+    id: 'tpl-math-tools',
+    title: 'math 库常用函数做题极速解法模板',
+    gespLevel: 'GESP 1-4级必考',
+    category: '数论与算法',
+    summary: '涵盖质数判断 O(√n) 开方提速、租车乘船天花板向上取整、分数约分最大公约数与阶乘计算。',
+    code: `import math
+
+# 1. 租车/排队问题：向上进位取整
+n, k = 45, 10 # 45人，每车坐10人
+cars = math.ceil(n / k) # 5 辆车
+# 免导包纯整数写法: cars = (n + k - 1) // k
+
+# 2. 高效质数判断：只需遍历到 int(math.sqrt(x)) + 1
+def is_prime(x):
+    if x <= 1: return False
+    for i in range(2, int(math.sqrt(x)) + 1):
+        if x % i == 0:
+            return False
+    return True
+
+# 3. 最简分数化简：分子分母同除以最大公约数 gcd
+numerator, denominator = 24, 36
+g = math.gcd(numerator, denominator)
+print(f"最简分数: {numerator // g}/{denominator // g}") # 2/3
+
+# 4. 最小公倍数 lcm (两车同时发车周期)
+l = math.lcm(numerator, denominator)
+print("最小公倍数:", l) # 72`,
+    explanation: 'math.ceil 完美解决除不尽向上多加 1 个车箱的进位问题；math.sqrt 将质数判断从 O(n) 降低至 O(√n)；math.gcd 与 math.lcm 则是约分与周期问题的官方秒杀神器。',
+    pitfall: '1. 负数开方 math.sqrt(-4) 会报错崩溃，必须确保非负！2. 循环遍历质数上界切记加 1 写成 range(2, int(math.sqrt(n)) + 1)，否则像 n=9 会漏掉 √9=3 误判为质数！',
+  },
 ];
