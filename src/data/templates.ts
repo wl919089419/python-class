@@ -269,4 +269,27 @@ print("最小公倍数:", l) # 72`,
     explanation: 'math.ceil 完美解决除不尽向上多加 1 个车箱的进位问题；math.sqrt 将质数判断从 O(n) 降低至 O(√n)；math.gcd 与 math.lcm 则是约分与周期问题的官方秒杀神器。',
     pitfall: '1. 负数开方 math.sqrt(-4) 会报错崩溃，必须确保非负！2. 循环遍历质数上界切记加 1 写成 range(2, int(math.sqrt(n)) + 1)，否则像 n=9 会漏掉 √9=3 误判为质数！',
   },
+  {
+    id: 'tpl-var-swap-assign',
+    title: '两数极速交换与多元赋值核心模板',
+    gespLevel: 'GESP 1-2级必考',
+    category: '基础语法',
+    summary: '无需任何中间变量 temp，一行代码完成 a, b = b, a 两数交换；支持多变量同时赋值与复合累加。',
+    code: `# 1. 变量极速互换 (GESP 1-2级真题最高频)
+a, b = 10, 20
+a, b = b, a # 一秒互换！此时 a=20, b=10
+
+# 2. 连续链式赋值 (赋相同初始值)
+x = y = z = 0
+
+# 3. 复合赋值累加运算 (计数器常用)
+count = 0
+count += 1 # 等价于 count = count + 1
+
+# 4. 字符串与数字拼接规范 (防 TypeError 避坑)
+name, age = "小明", 12
+print(f"姓名: {name}, 年龄: {age}") # 推荐 f-string，不要用 + 拼接`,
+    explanation: 'Python 在执行 a, b = b, a 时，会先在右侧把 (b, a) 打包成元组，再解包分配给左侧的 a 和 b，因此完全不需要像其他语言那样创建 temp 临时变量。',
+    pitfall: '千万不要写 a = b; b = a，这样 a 会先被覆盖成 b 的值，导致两个变量变成同一个数值！',
+  },
 ];

@@ -20,6 +20,7 @@ export type InteractiveType =
   | 'fstring_lab'   // Specialized f-string interactive lab
   | 'for_lab'       // Specialized for...in loop essence & animated step-by-step lab
   | 'math_lab'      // Specialized math library interactive lab (sqrt, ceil, floor, gcd, lcm, pi, etc.)
+  | 'var_lab'       // Specialized variable, assignment & data types interactive lab
   | 'slice_lab'     // Visual string / list index and slice visualizer
   | 'custom';
 

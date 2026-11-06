@@ -487,12 +487,168 @@ print(f"奖金: {money:,} 元")      # 1,000,000 元`,
   },
   {
     id: 'gesp13-vars-types',
-    title: '变量与基础数据类型',
+    title: '变量、赋值与数据类型',
     stageId: 'gesp13',
     icon: 'fa-solid fa-cube',
-    badge: '数字与类型',
-    description: '整数 int、浮点数 float、字符串 str、布尔值 bool 以及类型检测与互转。',
+    badge: '⭐ 核心基本功',
+    description: '变量命名合法性三大铁律、赋值语句与两数极速交换 a, b = b, a、四大核心基本数据类型(int/float/str/bool)与类型转换避坑。',
     items: [
+      {
+        id: 'api-var-lab',
+        name: '变量与数据类型全能实验室',
+        title: '变量命名检测、两数交换与四大类型互动实验室',
+        stageId: 'gesp13',
+        categoryId: 'gesp13-vars-types',
+        level: 'GESP 1-2级必考',
+        difficulty: '⭐⭐',
+        summary: '变量是贴了标签的储物盒，等号 = 是把宝物装进盒子！亲自动手测试变量命名是否合法、体验 Python 一行极速交换两数 a, b = b, a，用显微镜看穿 int/float/str/bool 四大基本类型与类型转换陷阱！',
+        syntax: '# 1. 变量命名与基础赋值\nvar_name = value\n\n# 2. 链式赋值与多元赋值\nx = y = 0\na, b = 10, 20\n\n# 3. 极速交换两数 (无需临时变量)\na, b = b, a\n\n# 4. 复合赋值\ncount += 1',
+        returnType: 'None',
+        params: [
+          { name: '变量名', type: 'identifier', required: true, desc: '只能由字母、数字、下划线组成，绝不能以数字开头，不能占用 Python 关键字' },
+          { name: '=', type: 'assignment', required: true, desc: '单等号是赋值运算，将右边计算结果存入左边变量' },
+          { name: 'value', type: 'any', required: true, desc: '被赋予的数据，决定变量当前的数据类型' },
+        ],
+        codeExample: `# 1. 变量定义与命名 (合规: 字母/下划线开头)
+student_name = "小明"
+student_age = 11
+
+# 2. ⚡ Python 绝技：两数一秒交换 (无需第三方变量 temp！)
+a, b = "苹果 🍎", "香蕉 🍌"
+a, b = b, a # 移形换影！
+print("交换后 a =", a)
+print("交换后 b =", b)
+
+# 3. 四大核心基本类型检测
+print(type(100))       # <class 'int'> 整数
+print(type(3.14))      # <class 'float'> 浮点数
+print(type("Python"))  # <class 'str'> 字符串
+print(type(True))      # <class 'bool'> 布尔值
+
+# 4. 复合赋值运算符
+score = 90
+score += 5             # 等价于 score = score + 5
+print("最终得分:", score)`,
+        expectedOutput: "交换后 a = 香蕉 🍌\n交换后 b = 苹果 🍎\n<class 'int'>\n<class 'float'>\n<class 'str'>\n<class 'bool'>\n最终得分: 95",
+        interactiveType: 'var_lab',
+        pitfall: '1. 【命名首字符大坑】：绝对不能以数字开头（如 1a、2nd 直接报 SyntaxError）！且不能使用 Python 关键字（如 if, for, class 等）。\n2. 【单等号 vs 双等号】：单等号 = 是赋值（存东西），双等号 == 才是比较是否相等！考级选择题常在 if 语句里用 a = 1 迷惑考生。\n3. 【int 转换非四舍五入】：int(3.99) 的结果是 3 而不是 4！int 是向零截断砍掉小数部分，四舍五入必须用 round()。',
+        examTip: 'GESP 1-2 级必考 1-2 道选择题：① 给出一组变量名选出合法的/非法的；② 考查 a, b = b, a 交换后的值；③ 考查 type() 的输出类型。',
+        tags: ['变量', '赋值', '两数交换', 'int', 'float', 'str', 'bool', '命名规则', '基本功', '机考核心'],
+      },
+      {
+        id: 'api-var-naming-rules',
+        name: '变量定义与命名 3 大铁律',
+        title: '合法标识符规则与保留关键字避坑',
+        stageId: 'gesp13',
+        categoryId: 'gesp13-vars-types',
+        level: 'GESP 1级必考',
+        difficulty: '⭐',
+        summary: '变量是存储数据的贴签盒子。命名必须遵从三大铁律：① 只能包含字母、数字和下划线；② 绝对不能以数字开头；③ 严格区分大小写且避开保留关键字！',
+        syntax: '变量名 = 表达式\n# 合法: score_1, _temp, myAge\n# 非法: 1score, class, my-name',
+        returnType: 'None',
+        params: [
+          { name: '变量名', type: 'str', required: true, desc: '由字母、数字、下划线组成的合法标识符' },
+        ],
+        codeExample: `# ✅ 合法合规命名示例：
+user_score = 95   # 推荐：小写字母加下划线 (蛇形命名)
+totalCount = 100  # 驼峰命名
+_temp_var = 0     # 下划线开头合法
+pi_3_14 = 3.14    # 数字在中间或末尾合法
+
+# ⚠️ 大小写敏感性测试 (Age 与 age 是两个完全不同的盒子)：
+age = 10
+Age = 18
+print("age =", age) # 10
+print("Age =", Age) # 18
+
+# ❌ 常见非法命名 (取消注释会直接报 SyntaxError)：
+# 2apples = 5     # 报错！不能以数字开头！
+# my-name = "Tom" # 报错！不能有减号/破折号！
+# class = 1       # 报错！不能使用保留关键字！
+# user age = 12   # 报错！不能有空格！`,
+        expectedOutput: 'age = 10\nAge = 18',
+        interactiveType: 'terminal',
+        pitfall: '1. 数字开头的致命陷阱：像 1a、2026_year 绝对是非法的！必须把字母放前面，如 a1、year_2026。\n2. 减号破折号陷阱：很多同学习惯写 user-id，在 Python 中减号会被当成数学减法运算符导致语法报错！必须用下划线 user_id。\n3. 保留字被占：像 if, for, while, def, class, return, import 等是 Python 核心语法词，绝对不能作为变量名！',
+        examTip: 'GESP 1 级每套真题选择题第 1~3 题几乎必出：“以下哪个选项是合法的 Python 变量名？” 牢记口诀：字母下划线开头，数字只能站后头，关键字特殊符号全不能留！',
+        tags: ['变量命名', '关键字', '标识符', '大小写敏感', '真题必考', '合法变量'],
+      },
+      {
+        id: 'api-assignment-ops',
+        name: '赋值语句与两数极速交换',
+        title: '单等号赋值、多元赋值与 a, b = b, a',
+        stageId: 'gesp13',
+        categoryId: 'gesp13-vars-types',
+        level: 'GESP 1-2级必考',
+        difficulty: '⭐⭐',
+        summary: '单等号 = 是把右边的计算结果赋值给左边的变量。掌握链式赋值 a=b=0、多元赋值 a,b=1,2，以及做题第一神技：无需第三变量一行交换两数 a, b = b, a！',
+        syntax: 'a = 10                # 基础赋值\nx = y = z = 0         # 链式赋值\na, b = 1, 2           # 多元解包赋值\na, b = b, a           # 极速交换两数\ncount += 1            # 复合赋值',
+        returnType: 'None',
+        params: [
+          { name: '=', type: 'operator', required: true, desc: '赋值运算符，右边先算完，再存入左边变量' },
+          { name: '+=, -=, *=', type: 'operator', required: false, desc: '复合算术赋值，用于变量自身累加或递增' },
+        ],
+        codeExample: `# 1. 多元赋值与链式赋值
+x = y = 0             # 同时给 x 和 y 赋初始值 0
+name, score = "小明", 99
+print(f"{name} 成绩是 {score} 分")
+
+# 2. ⚡ 考级必考第一神技：一行代码交换两数！
+a = 10
+b = 20
+print(f"交换前: a={a}, b={b}")
+
+# 无需声明 temp 变量，直接移形换影：
+a, b = b, a
+print(f"交换后: a={a}, b={b}")
+
+# 3. 复合赋值运算符 (计数器最常用)
+total = 100
+total += 20  # 等价于 total = total + 20
+total -= 10  # 等价于 total = total - 10
+total *= 2   # 等价于 total = total * 2
+print("计算结果 total =", total)`,
+        expectedOutput: '小明 成绩是 99 分\n交换前: a=10, b=20\n交换后: a=20, b=10\n计算结果 total = 220',
+        interactiveType: 'terminal',
+        pitfall: '1. 单等号 = 与双等号 == 绝对不能混淆！= 是“存入赋值”，== 是“比较是否相等返回 True/False”。如果在 if 条件判断中错写成 a = 5 会直接引发 SyntaxError！\n2. 赋值顺序是从右往左算：a = b + 5 是先计算右边的 b + 5，再存入 a。',
+        examTip: 'GESP 1-2 级编程大题和填空题中，要求交换两个变量时，直接写 a, b = b, a 是最标准也是代码量最少的满分答案！',
+        tags: ['赋值', '两数交换', '解包', '复合赋值', '计数器', '等号'],
+      },
+      {
+        id: 'api-data-types-overview',
+        name: '四大基本数据类型全景',
+        title: 'int、float、str、bool 的本质与动态类型',
+        stageId: 'gesp13',
+        categoryId: 'gesp13-vars-types',
+        level: 'GESP 1-2级必考',
+        difficulty: '⭐⭐',
+        summary: 'Python 的四大基石类型：int(整型)、float(浮点型)、str(字符串) 和 bool(布尔型)。变量不固定类型，赋值什么就是什么，随时可重新绑定！',
+        syntax: 'int: 100, -5, 0\nfloat: 3.14, 2.0, -0.5\nstr: "文本", \'文字\'\nbool: True, False',
+        returnType: 'type',
+        params: [
+          { name: 'type(x)', type: 'function', required: true, desc: '返回变量 x 当前所存储对象的数据类型' },
+        ],
+        codeExample: `# 1. 四大基本类型的标准书写
+num_int = 42          # 整数 int
+num_float = 3.14      # 浮点数 float
+text_str = "Python3"  # 字符串 str (带单/双引号)
+flag_bool = True      # 布尔值 bool (首字母必须大写！)
+
+print("num_int 类型:", type(num_int))
+print("num_float 类型:", type(num_float))
+print("text_str 类型:", type(text_str))
+print("flag_bool 类型:", type(flag_bool))
+
+# 2. 动态类型特性：重新赋值可以随时改变类型！
+item = 100
+print("初始类型:", type(item)) # int
+item = "一百分"
+print("改赋文字后:", type(item)) # 变成了 str！`,
+        expectedOutput: "num_int 类型: <class 'int'>\nnum_float 类型: <class 'float'>\ntext_str 类型: <class 'str'>\nflag_bool 类型: <class 'bool'>\n初始类型: <class 'int'>\n改赋文字后: <class 'str'>",
+        interactiveType: 'terminal',
+        pitfall: '1. 布尔值首字母必须大写！写 true 或 false 会报 NameError: name \'true\' is not defined！必须写 True 和 False！\n2. 浮点数除法结果：哪怕 4 / 2 能除尽，单斜杠除法 / 的返回值也是 float 2.0！如果考题要求输出整数，必须用 // 整除。',
+        examTip: 'GESP 1 级选择题必考考点：问某段代码执行后变量属于哪个类型，特别是区分 "123"（带引号是 str）和 123（不带引号是 int）。',
+        tags: ['数据类型', 'int', 'float', 'str', 'bool', 'type', '动态类型', '变量类型'],
+      },
       {
         id: 'api-int-float',
         name: 'int() & float()',
